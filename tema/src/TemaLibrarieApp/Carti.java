@@ -17,37 +17,40 @@ public class Carti {
     private int numarDePagini;
     private List<Pagina> pagini = new ArrayList<>(numarDePagini);
 
+    public Carti(){ }
+
+    public Carti(String nume,int numarDePagini){
+        this.nume=nume;
+        this.numarDePagini=numarDePagini;
+    }
+
+    /**
+     * metoda getter pentru returnarea numelui cartii
+     * @return numele cartii
+     */
     public String getNume() {
         return nume;
     }
 
-    public Carti(){ }
-
-    public Carti(String nume,int numarDePagini) throws CustomException{
-        if (numarDePagini <=50){
-            throw new CustomException("Cartea trebuie sa aiba mai mult de 50 de pagini, in cazul asta are: " + numarDePagini);
-        }
-        else {
-            this.nume=nume;
-            this.numarDePagini=numarDePagini;
-            System.out.println("OK");
-
-        }
-
-    }
-
+    /**
+     * metoda setter ce seteaza numele cartii
+     * @param nume carte de tip string
+     */
     public void setNume(String nume) {
         this.nume = nume;
 
     }
 
+
     public int getNumarDePagini() {
         return numarDePagini;
     }
 
-    public void setNumarDePagini(int numarDePagini) {
-        this.numarDePagini = numarDePagini;
+    public void setNumarDePagini(int numarDePagini) throws CustomException {
+        if(numarDePagini<50) throw new CustomException("Pagini mai multe!");
+        else this.numarDePagini = numarDePagini;
     }
+
 
     public List<Pagina> getPagini() {
         return pagini;
@@ -57,13 +60,23 @@ public class Carti {
         this.pagini = pagini;
     }
 
+    /**
+     * metoda folosita pentru a salva carti si va fi volosita
+     * pentru popularea listei catalogului
+     * @return o reprezentare specifica instantei @Carti
+     */
     public String toStringForFile() {
         return getNume() + "-" + getNumarDePagini();
 
     }
 
+    /**
+     *
+     * @return  elementele cartii (reprezentare a instantei Carti)
+     */
     @Override
     public String toString() {
         return "Numele cartii: " + getNume() + "Numar de pagini: " + getNumarDePagini();
     }
+
 }

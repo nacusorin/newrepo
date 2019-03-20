@@ -1,5 +1,11 @@
 package TemaLibrarieApp;
 
+/**
+ * @author Nacu Sorin-Constantin
+ * @version 5.2 beta
+ * @since 2019-02-20
+ */
+
 import TemaLibrarieApp.Catalog;
 
 public class CustomException extends Exception {

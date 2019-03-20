@@ -10,6 +10,11 @@ public class Pagina {
     private String continut;
     private int numarPagina;
 
+    /**
+     * getter si setter pentru numar de pagina si continut
+     * @return numar pagina si continut
+     * @param # strings
+     */
     public int getNumarPagina() {
         return numarPagina;
     }

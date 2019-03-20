@@ -5,7 +5,7 @@ package TemaLibrarieApp;
  * @version 5.2 beta
  * @since 2019-02-20
  */
-
+import org.apache.log4j.Logger;
 import javax.swing.*;
 import java.io.File;
 import java.io.PrintWriter;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public final class CatalogArray implements CatalogInterfata {
-
+    private static final Logger log = Logger.getLogger(String.valueOf(Catalog.class));
     private Carti[] catalog = new Carti[10];
 
     @Override
@@ -55,11 +55,101 @@ public final class CatalogArray implements CatalogInterfata {
                     addAlbumArta();
                     break;
                 default:
-                    System.out.println("Actiune invalida !!.");
+                    log.info("Actiune invalida !!.");
                     break;
             }
-        } else System.out.println("Libraria este plina !.");
+        } else log.info("Libraria este plina !.");
     }
+
+    @Override
+    public void removeCarti() {
+        boolean bookExists = false;
+        String tempName = JOptionPane.showInputDialog("Tasteaza numele cartii pe care vrei sa o stergi:");
+
+        for (Carti item : catalog) {
+            if ((item != null) && (item.getNume().equals(tempName))) {
+                    bookExists = true;
+                    log.info("\nCartea: " + item.toString() + " a fost stearsa din catalog :)");
+                    catalog[getArrayIndex(catalog, item)] = null;
+                }
+
+        }
+        if (!bookExists) log.info("\nCartea nu este in catalog.");
+    }
+
+    @Override
+    public void listCatalog() {
+        int catalogsize = 0;
+        for (Carti item : catalog) {
+            if (item != null) catalogsize++;
+        }
+        log.info("\nNumere de iteme in catalog: " + catalogsize);
+        for (Carti item : catalog) {
+            if (item != null) {
+                log.info(item);
+            }
+        }
+    }
+
+    @Override
+    public void saveCatalog() {
+        PrintWriter printCatalog = null;
+        try {
+            printCatalog = new PrintWriter("src/resources/Catalog.txt");
+        } catch (Exception e) {
+            log.info("Crearea fisierului.");
+        }
+        for (Carti book : catalog) {
+            if (book != null) {
+                printCatalog.println(book.toStringForFile());
+            }
+        }
+        printCatalog.close();
+    }
+
+    @Override
+    public void loadCatalog() {
+        Scanner scan;
+        File file = new File("src/resources/Catalog.txt");
+        try {
+            scan = new Scanner(file);
+            while (scan.hasNextLine()) {
+
+                String tempLine = scan.nextLine();
+                String[] tempArray2 = tempLine.split("-");
+                AlbumeArta x = new AlbumeArta();
+                Nuvele n = new Nuvele();
+
+                if (tempArray2[0].equals("Albume de arta: ")) {
+                    x.setNume(tempArray2[1]);
+                    x.setNumarDePagini(Integer.parseInt(tempArray2[2]));
+                    x.setCalitatehartie(tempArray2[3]);
+                    for (int i = 0; i < catalog.length; i++) {
+                        if (catalog[i] == null) {
+                            catalog[i] = x;
+                            break;
+                        }
+                    }
+                } else if (tempArray2[0].equals("Nuvele: ")) {
+                    n.setNume(tempArray2[1]);
+                    n.setNumarDePagini(Integer.parseInt(tempArray2[2]));
+                    n.setTipulnuvelei(tempArray2[3]);
+                    for (int i = 0; i < catalog.length; i++) {
+                        if (catalog[i] == null) {
+                            catalog[i] = n;
+                            break;
+                        }
+                    }
+                }
+            }
+            scan.close();
+        } catch (Exception e) {
+            log.info("Crearea fisierului .txt se va efectua la iesirea din aplicatie.");
+        }
+
+    }
+
+
 
     private void addNuvela() {
         Nuvele n = new Nuvele();
@@ -68,13 +158,17 @@ public final class CatalogArray implements CatalogInterfata {
         String[] tempArray = tempString.split(",");
 
         n.setNume(tempArray[0]);
-        n.setNumarDePagini(Integer.parseInt(tempArray[1]));
+        try {
+            n.setNumarDePagini(Integer.parseInt(tempArray[1]));
+        } catch (CustomException e) {
+            e.printStackTrace();
+        }
         n.setTipulnuvelei(tempArray[2]);
 
         for (int i = 0; i < catalog.length; i++) {
             if (catalog[i] == null) {
                 catalog[i] = n;
-                System.out.println("\nCartea: " + n.toString() + " a fost adaugata in catalog.");
+                log.info("\nCartea cu numele: " + n.toString() + " a fost adaugata in catalog.");
                 break;
             }
         }
@@ -87,101 +181,21 @@ public final class CatalogArray implements CatalogInterfata {
         String[] tempArray = tempString.split(",");
 
         a.setNume(tempArray[0]);
-        a.setNumarDePagini(Integer.parseInt(tempArray[1]));
-        a.setCalitatehartie(tempArray[2]);
+        try {
+            a.setNumarDePagini(Integer.parseInt(tempArray[1]));
+        } catch (CustomException e) {
+            log.warn("Error{}", e);
+            a.setCalitatehartie(tempArray[2]);
 
-        for (int i = 0; i < catalog.length; i++) {
-            if (catalog[i] == null) {
-                catalog[i] = a;
-                System.out.println("\nCartea: " + a.toString() + " a fost adaugata in catalog.");
-                break;
-            }
-        }
-    }
-
-    public void listCatalog() {
-        int catalogsize = 0;
-        for (Carti item : catalog) {
-            if (item != null) catalogsize++;
-        }
-        System.out.println("\nNumere de iteme in catalog: " + catalogsize);
-        for (Carti item : catalog) {
-            if (item != null) {
-                System.out.println(item);
-            }
-        }
-    }
-
-    public void removeCarti() {
-        boolean bookExists = false;
-        String tempName = JOptionPane.showInputDialog("Tasteaza numele cartii pe care vrei sa o stergi:");
-
-        for (Carti item : catalog) {
-            if (item != null) {
-                if (item.getNume().equals(tempName)) {
-                    bookExists = true;
-                    System.out.println("\nCartea: " + item.toString() + " a fost stearsa din catalog :)");
-                    catalog[getArrayIndex(catalog, item)] = null;
+            for (int i = 0; i < catalog.length; i++) {
+                if (catalog[i] == null) {
+                    catalog[i] = a;
+                    log.info("\nCartea: " + a.toString() + " a fost adaugata in catalog.");
+                    break;
                 }
             }
         }
-        if (!bookExists) System.out.println("\nCartea nu este in catalog.");
-    }
 
-    public void saveCatalog() {
-        PrintWriter printCatalog = null;
-        try {
-            printCatalog = new PrintWriter("src/resources/Catalog.txt");
-        } catch (Exception e) {
-            System.out.println("Crearea fisierului.");
-        }
-        for (Carti book : catalog) {
-            if (book != null) {
-                printCatalog.println(book.toStringForFile());
-            }
-        }
-        printCatalog.close();
-    }
 
-    public void loadCatalog() {
-        Scanner scan;
-        File file = new File("src/resources/Catalog.txt");
-        try {
-            scan = new Scanner(file);
-            while (scan.hasNextLine()) {
-
-                String tempLine = scan.nextLine();
-                String[] tempArray = tempLine.split("-");
-                AlbumeArta a = new AlbumeArta();
-                Nuvele n = new Nuvele();
-
-                if (tempArray[0].equals("Albume de arta: ")) {
-                    a.setNume(tempArray[1]);
-                    a.setNumarDePagini(Integer.parseInt(tempArray[2]));
-                    a.setCalitatehartie(tempArray[3]);
-                    for (int i = 0; i < catalog.length; i++) {
-                        if (catalog[i] == null) {
-                            catalog[i] = a;
-                            break;
-                        }
-                    }
-                } else if (tempArray[0].equals("Nuvele: ")) {
-                    n.setNume(tempArray[1]);
-                    n.setNumarDePagini(Integer.parseInt(tempArray[2]));
-                    n.setTipulnuvelei(tempArray[3]);
-                    for (int i = 0; i < catalog.length; i++) {
-                        if (catalog[i] == null) {
-                            catalog[i] = n;
-                            break;
-                        }
-                    }
-                }
-            }
-            scan.close();
-        } catch (Exception e) {
-            System.out.println("Crearea fisierului .txt se va efectua la iesirea din aplicatie.");
-        }
     }
 }
-
-

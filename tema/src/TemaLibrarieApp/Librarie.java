@@ -12,10 +12,12 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 public class Librarie {
-
+    /**
+     * logger
+     */
     private static final Logger log = Logger.getLogger(String.valueOf(Librarie.class));
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CustomException {
         BasicConfigurator.configure();
         log.debug("Debug");
         log.info("Library works");
@@ -23,14 +25,6 @@ public class Librarie {
         log.error("Ceva nu bate!");
         log.fatal("ERROR!!!");
 
-
-        Carti book = null;
-        try {
-            book = new Carti("Carte", 100);
-        }
-        catch (CustomException e){
-            System.out.println(e.getMessage());
-        }
 
         Catalog cata = new Catalog();
         int action;
@@ -49,11 +43,11 @@ public class Librarie {
                     cata.listCatalog();
                     break;
                 case 0:
-                    System.out.println("\nIesire din catalog");
+                    log.info("\nIesire din catalog");
                     cata.saveCatalog();
                     break;
                 default:
-                    System.out.println("\nActiune nevalida");
+                    log.info("\nActiune nevalida");
                     break;
             }
 
