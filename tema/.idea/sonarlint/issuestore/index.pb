@@ -21,3 +21,8 @@ O
 src/TemaLibrarieApp/Nuvele.java,9\7\9739d94c496389e06ede71948c406420dc78e588
 O
 src/TemaLibrarieApp/Pagina.java,4\9\49c5f685bf5151d2952a36f982c2f528569cf861
+E
+lib/logger.properties,e\3\e311014e5dd427972eea13c65e3d03dbc47f0763
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
